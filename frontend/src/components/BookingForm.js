@@ -1,27 +1,45 @@
-import React, { useState } from 'react';
-import { bookItem } from '../services/bookingService';
+import React, { useState, useEffect } from 'react';
+import { fetchHorses, createBooking } from '../services/bookingService';
 
 function BookingForm() {
-  const [formData, setFormData] = useState({
-    item_code: '1', // A CREER SUR DOKOS IMPORTANT !!!!!!
-    from_datetime: '',
-    to_datetime: '',
-    customer: '',
-  });
+  const [horses, setHorses] = useState([]);
+  const [selectedHorse, setSelectedHorse] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  useEffect(() => {
+    const loadHorses = async () => {
+      try {
+        const data = await fetchHorses();
+        setHorses(data);
+      } catch (error) {
+        console.error('Erreur lors du chargement des chevaux :', error);
+      }
+    };
+
+    loadHorses();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const bookingData = {
+      horse: selectedHorse,
+      starts_on: new Date(startTime),
+      ends_on: new Date(new Date(startTime).getTime() + 30 * 60000), // Ajoute 30 minutes
+      customer_name: customerName,
+      customer_email: customerEmail,
+    };
+
     try {
-      await bookItem(formData);
+      await createBooking(bookingData);
       alert('Réservation réussie !');
-      // Réinitialiser le formulaire ou rediriger l'utilisateur
+      // Réinitialiser le formulaire
+      setSelectedHorse('');
+      setStartTime('');
+      setCustomerName('');
+      setCustomerEmail('');
     } catch (error) {
       alert('Erreur lors de la réservation.');
     }
@@ -29,36 +47,48 @@ function BookingForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>De :</label>
+      <label>
+        Cheval:
+        <select value={selectedHorse} onChange={(e) => setSelectedHorse(e.target.value)} required>
+          <option value="">Sélectionnez un cheval</option>
+          {horses.map((horse) => (
+            <option key={horse._id} value={horse._id}>
+              {horse.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <br />
+      <label>
+        Date et Heure de début:
         <input
           type="datetime-local"
-          name="from_datetime"
-          value={formData.from_datetime}
-          onChange={handleChange}
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
           required
         />
-      </div>
-      <div>
-        <label>À :</label>
-        <input
-          type="datetime-local"
-          name="to_datetime"
-          value={formData.to_datetime}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div>
-        <label>Votre nom :</label>
+      </label>
+      <br />
+      <label>
+        Votre Nom:
         <input
           type="text"
-          name="customer"
-          value={formData.customer}
-          onChange={handleChange}
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
           required
         />
-      </div>
+      </label>
+      <br />
+      <label>
+        Votre Email:
+        <input
+          type="email"
+          value={customerEmail}
+          onChange={(e) => setCustomerEmail(e.target.value)}
+          required
+        />
+      </label>
+      <br />
       <button type="submit">Réserver</button>
     </form>
   );

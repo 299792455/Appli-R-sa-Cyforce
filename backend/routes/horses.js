@@ -1,17 +1,13 @@
 const express = require('express');
-const Horse = require('../models/Horse');
-
 const router = express.Router();
+const horseCtrl = require('../controleur/horseCtrl');
+const auth = require('../middleware/auth');
 
-// Route pour obtenir tous les chevaux
-router.get('/', async (req, res) => {
-  try {
-    const horses = await Horse.find();
-    res.json(horses);
-  } catch (error) {
-    console.error('Erreur lors de la récupération des chevaux :', error);
-    res.status(500).json({ message: 'Erreur lors de la récupération des chevaux.', error: error.message });
-  }
-});
+// Routes pour les chevaux
+router.post('/', auth, horseCtrl.addHorse);
+router.get('/', auth, horseCtrl.getAllHorses);
+router.get('/:id', auth, horseCtrl.getHorseById);
+router.put('/:id', auth, horseCtrl.updateHorse);
+router.delete('/:id', auth, horseCtrl.deleteHorse);
 
 module.exports = router;

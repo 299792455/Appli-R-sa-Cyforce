@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const Utilisateur = require('../models/utilisateur');
+const Utilisateur = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 // Regex pour valider le mot de passe et l'email
@@ -18,13 +18,13 @@ exports.signup = (req, res, next) => {
 
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
+            // Dans userCtrl.js
             const utilisateur = new Utilisateur({
                 name: req.body.name,
                 email: req.body.email,
                 password: hash,
                 bio: req.body.bio || '',  // Optionnel, peut être laissé vide
                 profileImage: req.body.profileImage || '',  // URL de l'image du profil
-                skills: req.body.skills || [],
                 socialLinks: req.body.socialLinks || []
             });
             utilisateur.save()

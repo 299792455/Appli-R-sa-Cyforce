@@ -1,75 +1,56 @@
-// config-multer.js
 const multer = require('multer');
-const sharp = require('sharp');
 const path = require('path');
-const fs = require('fs');
+const sharp = require('sharp');
 
-// Définir les types MIME acceptés
-const MIME_TYPES = {
-    'image/jpg': 'jpg',
-    'image/jpeg': 'jpeg',
-    'image/png': 'png',
-};
-
-// Configurer le stockage en mémoire
+// Configuration du stockage
 const storage = multer.memoryStorage();
 
-// Middleware multer avec filtrage des fichiers et limite de taille
-const upload = multer({ 
-    storage: storage,
-    fileFilter: (req, file, cb) => {
-        if (MIME_TYPES[file.mimetype]) {
-            cb(null, true);
-        } else {
-            cb(new Error('Invalid mime type'), false);
-        }
-    },
-    limits: {
-        fileSize: 5 * 1024 * 1024 // Limite de taille de fichier (5MB)
-    }
-}).single('image');
+// Filtre de fichier
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype);
 
-// Middleware pour optimiser l'image avec Sharp
-const optimizeImage = async (req, res, next) => {
-    if (!req.file) {
-        return next();
-    }
-
-    try {
-        const extension = MIME_TYPES[req.file.mimetype];
-        if (!extension) {
-            return res.status(400).json({ message: 'Type de fichier non supporté' });
-        }
-
-        // Fonction pour générer un nom de fichier unique
-        const generateFilename = (originalName, extension) => {
-            const name = originalName.split(' ').join('_').split('.')[0];
-            return `${name}_${Date.now()}.${extension}`;
-        };
-
-        const filename = generateFilename(req.file.originalname, extension);
-        const filepath = path.join(__dirname, '..', 'images', filename);
-
-        // Optimiser l'image avec Sharp et l'enregistrer sur le disque
-        await sharp(req.file.buffer)
-            .resize(800, 800, {
-                fit: sharp.fit.inside,
-                withoutEnlargement: true,
-            })
-            .toFormat('jpeg', { quality: 80 }) // Convertir en JPEG avec qualité 80%
-            .toFile(filepath);
-
-        // Attacher le nom de fichier et le chemin à l'objet req pour utilisation dans le contrôleur
-        req.optimizedImage = {
-            filename: filename,
-            path: filepath
-        };
-
-        next();
-    } catch (error) {
-        console.error('Erreur lors de l\'optimisation de l\'image:', error);
-        res.status(500).json({ error: 'Erreur lors de l\'optimisation de l\'image' });
-    }
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb(new Error('Seuls les fichiers JPEG, JPG et PNG sont autorisés.'));
+  }
 };
 
-module.exports = [upload, optimizeImage];
+// Middleware Multer avec Sharp pour l'optimisation des images
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+}).single('image'); // 'image' est le nom du champ dans le formulaire
+
+// Middleware pour traiter l'image
+const processImage = async (req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
+
+  try {
+    const optimizedImage = await sharp(req.file.buffer)
+      .resize(800, 800, { fit: 'inside' })
+      .toFormat('jpeg')
+      .jpeg({ quality: 80 })
+      .toBuffer();
+
+    req.file.buffer = optimizedImage;
+    req.file.filename = `${Date.now()}-${req.file.originalname}`;
+
+    // Enregistrer l'image sur le serveur
+    const imagePath = path.join(__dirname, '..', 'images', req.file.filename);
+    await sharp(req.file.buffer).toFile(imagePath);
+
+    req.body.imageUrl = `/images/${req.file.filename}`;
+    next();
+  } catch (error) {
+    console.error('Erreur lors de l\'optimisation de l\'image :', error);
+    res.status(500).json({ message: 'Erreur lors de l\'optimisation de l\'image.', error: error.message });
+  }
+};
+
+module.exports = { upload, processImage };

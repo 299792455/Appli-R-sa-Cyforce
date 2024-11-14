@@ -2,25 +2,21 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
-export const fetchAvailableSlots = async () => {
+// Fonction pour récupérer les créneaux réservés
+export const fetchBookings = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/available_slots`, {
-      params: {
-        // Optionnel : vous pouvez spécifier une plage de dates
-        // startDate: new Date().toISOString(),
-        // endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    });
+    const response = await axios.get(`${API_BASE_URL}/bookings`);
     return response.data;
   } catch (error) {
-    console.error('Erreur lors de la récupération des créneaux :', error.response ? error.response.data : error.message);
+    console.error('Erreur lors de la récupération des réservations :', error.response ? error.response.data : error.message);
     throw error;
   }
 };
 
-export const bookItem = async (bookingData) => {
+// Fonction pour réserver un créneau
+export const createBooking = async (bookingData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/book_item`, bookingData);
+    const response = await axios.post(`${API_BASE_URL}/bookings`, bookingData);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la réservation :', error.response ? error.response.data : error.message);
@@ -28,10 +24,10 @@ export const bookItem = async (bookingData) => {
   }
 };
 
-// Nouvelle Fonction pour Supprimer une Réservation
+// Fonction pour supprimer une réservation
 export const deleteBooking = async (id) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/book_item/${id}`);
+    const response = await axios.delete(`${API_BASE_URL}/bookings/${id}`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la suppression de la réservation :', error.response ? error.response.data : error.message);
@@ -39,7 +35,7 @@ export const deleteBooking = async (id) => {
   }
 };
 
-// Nouvelle Fonction pour Fetch les Chevaux
+// Fonction pour récupérer la liste des chevaux
 export const fetchHorses = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/horses`);
