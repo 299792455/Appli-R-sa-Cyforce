@@ -1,9 +1,11 @@
+// BookingForm.js
 import React, { useState, useEffect } from 'react';
 import { fetchHorses, createBooking } from '../services/bookingService';
+import '../styles/BookingForm.scss';
 
 function BookingForm() {
   const [horses, setHorses] = useState([]);
-  const [selectedHorse, setSelectedHorse] = useState('');
+  const [selectedHorses, setSelectedHorses] = useState([]);
   const [startTime, setStartTime] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -15,6 +17,7 @@ function BookingForm() {
         setHorses(data);
       } catch (error) {
         console.error('Erreur lors du chargement des chevaux :', error);
+        // Gérer l'erreur, par exemple en affichant un message à l'utilisateur
       }
     };
 
@@ -25,32 +28,43 @@ function BookingForm() {
     e.preventDefault();
 
     const bookingData = {
-      horse: selectedHorse,
+      horse: selectedHorses[0], // Si un seul cheval est sélectionné
       starts_on: new Date(startTime),
-      ends_on: new Date(new Date(startTime).getTime() + 30 * 60000), // Ajoute 30 minutes
+      ends_on: new Date(new Date(startTime).getTime() + 30 * 60000),
       customer_name: customerName,
       customer_email: customerEmail,
     };
 
     try {
       await createBooking(bookingData);
-      alert('Réservation réussie !');
+      alert('Créneau réservé avec succès !');
       // Réinitialiser le formulaire
-      setSelectedHorse('');
+      setSelectedHorses([]);
       setStartTime('');
       setCustomerName('');
       setCustomerEmail('');
     } catch (error) {
       alert('Erreur lors de la réservation.');
+      console.error('Erreur lors de la réservation :', error);
     }
+  };
+
+  const handleHorseSelection = (horseId) => {
+    setSelectedHorses([horseId]); // Permet de sélectionner un seul cheval
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Cheval:
-        <select value={selectedHorse} onChange={(e) => setSelectedHorse(e.target.value)} required>
-          <option value="">Sélectionnez un cheval</option>
+        Cheval :
+        <select
+          value={selectedHorses[0] || ''}
+          onChange={(e) => handleHorseSelection(e.target.value)}
+          required
+        >
+          <option value="" disabled>
+            Sélectionnez un cheval
+          </option>
           {horses.map((horse) => (
             <option key={horse._id} value={horse._id}>
               {horse.name}
@@ -58,9 +72,8 @@ function BookingForm() {
           ))}
         </select>
       </label>
-      <br />
       <label>
-        Date et Heure de début:
+        Date et Heure de début :
         <input
           type="datetime-local"
           value={startTime}
@@ -68,9 +81,8 @@ function BookingForm() {
           required
         />
       </label>
-      <br />
       <label>
-        Votre Nom:
+        Nom :
         <input
           type="text"
           value={customerName}
@@ -78,9 +90,8 @@ function BookingForm() {
           required
         />
       </label>
-      <br />
       <label>
-        Votre Email:
+        Email :
         <input
           type="email"
           value={customerEmail}
@@ -88,7 +99,6 @@ function BookingForm() {
           required
         />
       </label>
-      <br />
       <button type="submit">Réserver</button>
     </form>
   );

@@ -1,0 +1,46 @@
+@import '../styles/variables';
+
+.booking-form {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: $text-color;
+  }
+
+  .horses-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    .horse-checkbox {
+      display: flex;
+      align-items: center;
+      input[type="checkbox"] {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="datetime-local"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  button {
+    @include button-style($primary-color);
+    width: 100%;
+  }
+}

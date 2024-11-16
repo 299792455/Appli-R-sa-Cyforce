@@ -1,0 +1,10 @@
+@import '../styles/variables';
+
+.footer {
+  padding: 20px;
+  background-color: #fff;
+  text-align: center;
+  color: darken($text-color, 20%);
+  font-size: 0.9em;
+  border-top: 1px solid $light-gray;
+}

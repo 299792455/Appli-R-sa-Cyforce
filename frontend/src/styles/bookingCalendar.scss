@@ -1,46 +1,57 @@
-.rbc-event {
+@import '../styles/variables';
+
+.booking-calendar {
+  margin: 20px auto;
+  max-width: 800px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+  .rbc-event {
     border: none;
     border-radius: 4px;
-    color: #FFFFFF;
+    color: #fff;
     padding: 2px;
     font-size: 14px;
+    background-color: $primary-color;
   }
-  
+
   .rbc-time-view {
-    background-color: #f0f0f0;
+    background-color: $light-gray;
   }
-  
+
   .rbc-toolbar {
-    background-color: #FFFFFF;
+    background-color: #fff;
     padding: 10px;
   }
-  
+
   .rbc-header {
     padding: 10px;
-    background-color: #FFFFFF;
+    background-color: #fff;
     border-bottom: 1px solid #e0e0e0;
   }
-  
+
   .rbc-time-content {
-    background-color: #FFFFFF;
+    background-color: #fff;
   }
-  
-  /* Responsivité */
+
+  // Responsivité
   @media (max-width: 768px) {
     .rbc-time-view {
       flex-direction: column;
     }
-  
+
     .rbc-time-header {
       flex-direction: column;
     }
-  
+
     .rbc-time-content {
       overflow-x: scroll;
     }
-  
+
     .rbc-time-header-content {
       width: 100%;
     }
   }
-  
+}

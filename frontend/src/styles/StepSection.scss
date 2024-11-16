@@ -1,0 +1,32 @@
+@import '../styles/variables';
+
+.steps {
+  background-color: $light-gray;
+  padding: 40px;
+  text-align: center;
+
+  h2 {
+    color: $text-color;
+    margin-bottom: 20px;
+  }
+
+  .step {
+    display: inline-block;
+    width: 30%;
+    margin: 0 1%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      font-size: 2em;
+      color: $primary-color;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: $text-color;
+    }
+  }
+}

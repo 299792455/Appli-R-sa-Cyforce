@@ -1,0 +1,20 @@
+// Couleurs
+$primary-color: #97C4A7;
+$secondary-color: #A2D5C6;
+$text-color: #333;
+$background-color: #FAF3EB;
+$light-gray: #f0f0f0;
+
+// Mixin pour le style des boutons
+@mixin button-style($bg-color: $primary-color) {
+  padding: 10px 20px;
+  background-color: $bg-color;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  &:hover {
+    background-color: darken($bg-color, 10%);
+  }
+}
