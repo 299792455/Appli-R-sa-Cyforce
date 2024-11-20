@@ -1,19 +1,27 @@
 @import '../styles/variables';
 
 .steps {
-  background-color: $light-gray;
+  background-color: $background-color;
   padding: 40px;
-  text-align: center;
+  height: 370px;
 
   h2 {
     color: $text-color;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .step-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 
   .step {
-    display: inline-block;
-    width: 30%;
-    margin: 0 1%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
@@ -23,10 +31,34 @@
       font-size: 2em;
       color: $primary-color;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     p {
       color: $text-color;
+      text-align: center;
+    }
+  }
+
+  .cta-button-container {
+    text-align: center; /* Centre le bouton */
+    margin-top: 20px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: $primary-color;
+    color: #fff;
+    text-decoration: none; /* Retire le soulignement */
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
     }
   }
 }
+

@@ -1,14 +1,12 @@
-// BookingForm.js
-import React, { useState, useEffect } from 'react';
-import { fetchHorses, createBooking } from '../services/bookingService';
-import '../styles/BookingForm.scss';
+import React, { useState, useEffect } from "react";
+import { fetchHorses, createBooking } from "../services/bookingService";
+import "../styles/BookingForm.scss";
 
-function BookingForm() {
+function BookingForm({ start, end, onClose }) {
   const [horses, setHorses] = useState([]);
-  const [selectedHorses, setSelectedHorses] = useState([]);
-  const [startTime, setStartTime] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
+  const [selectedHorse, setSelectedHorse] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
 
   useEffect(() => {
     const loadHorses = async () => {
@@ -16,8 +14,7 @@ function BookingForm() {
         const data = await fetchHorses();
         setHorses(data);
       } catch (error) {
-        console.error('Erreur lors du chargement des chevaux :', error);
-        // Gérer l'erreur, par exemple en affichant un message à l'utilisateur
+        console.error("Erreur lors du chargement des chevaux :", error);
       }
     };
 
@@ -28,29 +25,21 @@ function BookingForm() {
     e.preventDefault();
 
     const bookingData = {
-      horse: selectedHorses[0], // Si un seul cheval est sélectionné
-      starts_on: new Date(startTime),
-      ends_on: new Date(new Date(startTime).getTime() + 30 * 60000),
+      horse: selectedHorse,
+      starts_on: start,
+      ends_on: end,
       customer_name: customerName,
       customer_email: customerEmail,
     };
 
     try {
       await createBooking(bookingData);
-      alert('Créneau réservé avec succès !');
-      // Réinitialiser le formulaire
-      setSelectedHorses([]);
-      setStartTime('');
-      setCustomerName('');
-      setCustomerEmail('');
+      alert("Créneau réservé avec succès !");
+      onClose(); // Fermer la modale après réservation
     } catch (error) {
-      alert('Erreur lors de la réservation.');
-      console.error('Erreur lors de la réservation :', error);
+      alert("Erreur lors de la réservation.");
+      console.error("Erreur lors de la réservation :", error);
     }
-  };
-
-  const handleHorseSelection = (horseId) => {
-    setSelectedHorses([horseId]); // Permet de sélectionner un seul cheval
   };
 
   return (
@@ -58,8 +47,8 @@ function BookingForm() {
       <label>
         Cheval :
         <select
-          value={selectedHorses[0] || ''}
-          onChange={(e) => handleHorseSelection(e.target.value)}
+          value={selectedHorse}
+          onChange={(e) => setSelectedHorse(e.target.value)}
           required
         >
           <option value="" disabled>
@@ -71,15 +60,6 @@ function BookingForm() {
             </option>
           ))}
         </select>
-      </label>
-      <label>
-        Date et Heure de début :
-        <input
-          type="datetime-local"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-          required
-        />
       </label>
       <label>
         Nom :

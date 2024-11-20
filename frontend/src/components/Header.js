@@ -16,7 +16,7 @@ function Header() {
       <div className="logo">Mon instant HippoCare</div>
       <nav>
         <Link to="/">Accueil</Link>
-        <Link to="/booking">Réservations</Link>
+        {/* <Link to="/booking">Réservations</Link> */}
         {isLoggedIn ? (
           <>
             {user && user.name ? (
@@ -24,6 +24,7 @@ function Header() {
             ) : (
               <span>Bienvenue</span>
             )}
+            <Link to="/profile">(Gérer mon Compte)</Link> {/* Lien vers la page profil */}
             <button onClick={handleLogout}>Se déconnecter</button>
           </>
         ) : (

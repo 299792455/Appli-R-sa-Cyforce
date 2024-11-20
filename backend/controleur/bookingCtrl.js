@@ -6,51 +6,49 @@ exports.createBooking = async (req, res) => {
   try {
     const { horse, starts_on, ends_on, customer_name, customer_email } = req.body;
 
-    // Validation des données
     if (!horse || !starts_on || !ends_on || !customer_name || !customer_email) {
-      return res.status(400).json({ message: 'Tous les champs sont obligatoires.' });
+      return res.status(400).json({ message: "Tous les champs sont obligatoires." });
     }
 
-    // Vérifier que le cheval existe
     const existingHorse = await Horse.findById(horse);
     if (!existingHorse) {
-      return res.status(404).json({ message: 'Cheval non trouvé.' });
+      return res.status(404).json({ message: "Cheval non trouvé." });
     }
 
-    // Vérifier la disponibilité
     const overlappingBooking = await Booking.findOne({
-      horse: horse,
+      horse,
       $or: [
         { starts_on: { $lt: ends_on }, ends_on: { $gt: starts_on } },
       ],
     });
 
     if (overlappingBooking) {
-      return res.status(400).json({ message: 'Ce créneau est déjà réservé pour ce cheval.' });
+      return res.status(400).json({ message: "Ce créneau est déjà réservé pour ce cheval." });
     }
 
-    // Créer la réservation
     const newBooking = new Booking({
       horse,
       starts_on,
       ends_on,
       customer_name,
       customer_email,
+      userId: req.auth.userId, // Associer la réservation à l'utilisateur connecté
     });
 
     await newBooking.save();
-
-    res.status(201).json({ message: 'Réservation réussie.', data: newBooking });
+    res.status(201).json({ message: "Réservation réussie.", data: newBooking });
   } catch (error) {
-    console.error('Erreur lors de la réservation :', error);
-    res.status(500).json({ message: 'Erreur lors de la réservation.', error: error.message });
+    console.error("Erreur lors de la réservation :", error);
+    res.status(500).json({ message: "Erreur lors de la réservation.", error: error.message });
   }
 };
 
 // Récupérer toutes les réservations
 exports.getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find().populate('horse');
+    const bookings = await Booking.find()
+      .populate('horse')
+      .select('horse starts_on ends_on userId');
     res.status(200).json(bookings);
   } catch (error) {
     console.error('Erreur lors de la récupération des réservations :', error);
@@ -86,17 +84,25 @@ exports.updateBooking = async (req, res) => {
   }
 };
 
-// Annuler une réservation
+// Annuler une réservation (DELETE /:id)
 exports.deleteBooking = async (req, res) => {
   try {
-    const deletedBooking = await Booking.findByIdAndDelete(req.params.id);
-    if (!deletedBooking) {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
       return res.status(404).json({ message: 'Réservation non trouvée.' });
     }
-    res.status(200).json({ message: 'Réservation annulée avec succès.', data: deletedBooking });
+
+    // Vérifier si l'utilisateur est le propriétaire de la réservation
+    if (booking.userId.toString() !== req.auth.userId) {
+      return res.status(403).json({ message: "Vous n'êtes pas autorisé à supprimer cette réservation." });
+    }
+
+    await Booking.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Réservation supprimée avec succès.' });
   } catch (error) {
     console.error('Erreur lors de la suppression de la réservation :', error);
-    res.status(500).json({ message: 'Erreur lors de la suppression de la réservation.', error: error.message });
+    res.status(500).json({ message: 'Erreur lors de la suppression de la réservation.' });
   }
 };
 
@@ -147,6 +153,7 @@ exports.bookItem = async (req, res) => {
       ends_on,
       customer_name: customer,
       customer_email: customerEmail,
+      userId: req.auth.userId, // Associer la réservation à l'utilisateur connecté
     });
 
     await newBooking.save();
@@ -172,8 +179,8 @@ exports.getAvailableSlots = async (req, res) => {
       starts_on: { $gte: start },
       ends_on: { $lte: end },
     })
-    .populate('horse')
-    .select('horse starts_on ends_on customer_name');
+      .populate('horse')
+      .select('horse starts_on ends_on customer_name userId');
 
     const bookedSlots = bookings.map((booking) => ({
       id: booking._id,
@@ -187,6 +194,7 @@ exports.getAvailableSlots = async (req, res) => {
       from_datetime: booking.starts_on,
       to_datetime: booking.ends_on,
       customer: booking.customer_name,
+      userId: booking.userId, // Inclure l'ID utilisateur
     }));
 
     res.json(bookedSlots);
@@ -196,21 +204,24 @@ exports.getAvailableSlots = async (req, res) => {
   }
 };
 
-// Supprimer une réservation via book_item/:id
+// Supprimer une réservation via book_item/:id (DELETE /book_item/:id)
 exports.deleteBookItem = async (req, res) => {
   try {
-    const { id } = req.params;
+    const booking = await Booking.findById(req.params.id);
 
-    // Trouver et supprimer la réservation
-    const deletedBooking = await Booking.findByIdAndDelete(id);
-
-    if (!deletedBooking) {
+    if (!booking) {
       return res.status(404).json({ message: 'Réservation non trouvée.' });
     }
 
-    res.json({ message: 'Réservation supprimée avec succès.', data: deletedBooking });
+    // Vérifier si l'utilisateur est le propriétaire de la réservation
+    if (booking.userId.toString() !== req.auth.userId) {
+      return res.status(403).json({ message: "Vous n'êtes pas autorisé à supprimer cette réservation." });
+    }
+
+    await Booking.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Réservation supprimée avec succès.' });
   } catch (error) {
     console.error('Erreur lors de la suppression de la réservation :', error);
-    res.status(500).json({ message: 'Erreur lors de la suppression de la réservation.', error: error.message });
+    res.status(500).json({ message: 'Erreur lors de la suppression de la réservation.' });
   }
 };

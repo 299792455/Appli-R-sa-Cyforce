@@ -1,22 +1,61 @@
 @import '../styles/variables';
 
 .main-banner {
+  display: flex;
   text-align: center;
   background-color: $background-color;
   padding: 50px;
 
-  h1 {
-    font-size: 2em;
-    color: $text-color;
-    margin-bottom: 10px;
+  .banner-image {
+    width: 40%;
+    display: flex; /* Assure que le contenu est aligné */
+    justify-content: center; /* Centre l'image horizontalement */
+    align-items: center; /* Centre l'image verticalement */
+    
+    img {
+      max-width: 100%; /* Empêche l'image de dépasser la largeur du conteneur */
+      height: auto; /* Garde les proportions de l'image */
+      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+      object-fit: cover; /* Optionnel : ajuste l'image pour qu'elle soit bien cadrée */
+    }
   }
 
-  p {
-    color: darken($text-color, 20%);
-    margin-bottom: 20px;
-  }
-
-  .cta-button {
-    @include button-style($primary-color);
-  }
+  .banner-content {
+    width: 60%;
+    display: flex; /* Assure que le contenu est aligné */
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; 
+      h1 {
+        font-size: 2em;
+        color: $text-color;
+        margin-bottom: 10px;
+      }
+    
+      p {
+        color: darken($text-color, 20%);
+        margin-bottom: 20px;
+      }
+  
+      .cta-button-container {
+        text-align: center; /* Centre le bouton */
+        margin-top: 20px;
+      }
+    
+      .cta-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: $primary-color;
+        color: #fff;
+        text-decoration: none; /* Retire le soulignement */
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+        transition: background-color 0.3s;
+    
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+    }
 }

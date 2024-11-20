@@ -1,0 +1,68 @@
+@import '../styles/variables';
+
+.user-profile-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* Deux colonnes : infos utilisateur/chevaux et calendrier */
+  gap: 20px;
+  padding: 40px;
+  background-color: $background-color;
+
+  .user-info {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+    h2, h3 {
+      color: $text-color;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: $text-color;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      li {
+        background-color: $background-color;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: $primary-color;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+      border: none; /* Supprime toute bordure */
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+
+  .calendar-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+
+    .rbc-calendar {
+      height: 600px; /* Ajustez la hauteur selon vos besoins */
+    }
+  }
+}

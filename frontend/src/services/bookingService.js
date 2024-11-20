@@ -1,4 +1,3 @@
-// bookingService.js
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -14,14 +13,25 @@ const axiosInstance = axios.create({
 // Ajouter un intercepteur pour inclure le token dans chaque requête
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = getToken();
+    const token = localStorage.getItem('token'); // Récupérer le token JWT
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers['Authorization'] = `Bearer ${token}`; // Ajouter le token au header Authorization
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
+
+// Fonction pour récupérer les informations utilisateur
+export const fetchUserInfo = async () => {
+  try {
+    const response = await axiosInstance.get('/users/me');
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des informations utilisateur :', error);
+    throw error;
+  }
+};
 
 // Fonction pour récupérer les créneaux disponibles
 export const fetchAvailableSlots = async () => {
@@ -29,10 +39,7 @@ export const fetchAvailableSlots = async () => {
     const response = await axiosInstance.get('/available_slots');
     return response.data;
   } catch (error) {
-    console.error(
-      'Erreur lors de la récupération des créneaux :',
-      error.response ? error.response.data : error.message
-    );
+    console.error('Erreur lors de la récupération des créneaux :', error);
     throw error;
   }
 };
@@ -43,10 +50,7 @@ export const createBooking = async (bookingData) => {
     const response = await axiosInstance.post('/bookings', bookingData);
     return response.data;
   } catch (error) {
-    console.error(
-      'Erreur lors de la réservation :',
-      error.response ? error.response.data : error.message
-    );
+    console.error('Erreur lors de la réservation :', error);
     throw error;
   }
 };
@@ -57,10 +61,7 @@ export const fetchHorses = async () => {
     const response = await axiosInstance.get('/horses');
     return response.data;
   } catch (error) {
-    console.error(
-      'Erreur lors de la récupération des chevaux :',
-      error.response ? error.response.data : error.message
-    );
+    console.error('Erreur lors de la récupération des chevaux :', error);
     throw error;
   }
 };
@@ -71,10 +72,40 @@ export const fetchBookings = async () => {
     const response = await axiosInstance.get('/bookings');
     return response.data;
   } catch (error) {
-    console.error(
-      'Erreur lors de la récupération des réservations :',
-      error.response ? error.response.data : error.message
-    );
+    console.error('Erreur lors de la récupération des réservations :', error);
+    throw error;
+  }
+};
+
+// Fonction pour appeler l'API de création de chevaux 
+export const createHorse = async (horseData) => {
+  try {
+    const response = await axiosInstance.post('/horses', horseData);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du cheval :', error);
+    throw error;
+  }
+};
+
+//Fonction pour la suppression d'une résa
+export const deleteBooking = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`/bookings/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la réservation :', error);
+    throw error;
+  }
+};
+
+// Fonction pour la suppression d'une réservation via book_item/:id
+export const deleteBookItem = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`/bookings/book_item/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la réservation via book_item :', error);
     throw error;
   }
 };

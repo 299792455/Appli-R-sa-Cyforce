@@ -39,7 +39,6 @@ exports.login = (req, res, next) => {
 
 // Inscription de l'utilisateur
 exports.signup = (req, res, next) => {
-  // Validation du mot de passe uniquement
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s])[A-Za-z\d@$!%*?&^#().,]{8,}$/;
   if (!passwordRegex.test(req.body.password)) {
     return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.' });
@@ -64,6 +63,23 @@ exports.signup = (req, res, next) => {
     })
     .catch((error) => {
       console.error('Erreur lors du hachage du mot de passe :', error);
+      res.status(500).json({ error });
+    });
+};
+
+// Récupération des informations utilisateur
+exports.getUserInfo = (req, res) => {
+  const userId = req.auth.userId; // Récupérer l'ID utilisateur depuis req.auth
+  Utilisateur.findById(userId)
+    .select('-password') // Exclure le mot de passe
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé !' });
+      }
+      res.status(200).json(user);
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la récupération des informations utilisateur :', error);
       res.status(500).json({ error });
     });
 };

@@ -23,6 +23,11 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     match: [/.+\@.+\..+/, 'Veuillez entrer un email valide'],
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Référence au modèle User
+    required: true, // Ce champ est maintenant requis
+  },
   created_at: {
     type: Date,
     default: Date.now,

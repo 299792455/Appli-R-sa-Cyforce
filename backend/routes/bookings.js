@@ -11,8 +11,8 @@ router.put('/:id', auth, bookingCtrl.updateBooking);
 router.delete('/:id', auth, bookingCtrl.deleteBooking);
 
 // Routes supplémentaires
-router.post('/book_item', bookingCtrl.bookItem);
-router.get('/available_slots', bookingCtrl.getAvailableSlots);
-router.delete('/book_item/:id', bookingCtrl.deleteBookItem);
+router.post('/book_item', auth, bookingCtrl.bookItem);
+router.get('/available_slots', auth, bookingCtrl.getAvailableSlots);
+router.delete('/book_item/:id', auth, bookingCtrl.deleteBookItem); // Utiliser deleteBookItem
 
 module.exports = router;

@@ -7,14 +7,24 @@ $light-gray: #f0f0f0;
 
 // Mixin pour le style des boutons
 @mixin button-style($bg-color: $primary-color) {
+  display: inline-block;
   padding: 10px 20px;
   background-color: $bg-color;
-  color: white;
-  border: none;
+  color: #fff;
+  text-decoration: none; /* Retire le soulignement */
+  border: none; /* Désactive la bordure */
+  outline: none; /* Supprime l'outline au focus */
   border-radius: 5px;
-  cursor: pointer;
+  font-weight: bold;
   text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Ajoute une transition pour le hover */
   &:hover {
-    background-color: darken($bg-color, 10%);
+    background-color: darken($bg-color, 10%); /* Fonce la couleur au survol */
+  }
+  &:focus {
+    outline: none; /* Supprime l'outline au focus */
   }
 }
+
+

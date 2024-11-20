@@ -1,25 +1,27 @@
 const Horse = require('../models/Horse');
+const mongoose = require('mongoose');
 
 // Ajouter un cheval
 exports.addHorse = async (req, res) => {
   try {
-    const { horseId, name, breed, socialSecurityNumber } = req.body;
+    const { name, breed, socialSecurityNumber } = req.body;
 
-    if (!horseId || !name || !breed || !socialSecurityNumber) {
+    if (!name || !breed || !socialSecurityNumber) {
       return res.status(400).json({ message: 'Tous les champs sont obligatoires.' });
     }
 
-    // Vérifier l'unicité
-    const existingHorse = await Horse.findOne({ horseId });
+    // Vérifier l'unicité du numéro de sécurité sociale
+    const existingHorse = await Horse.findOne({ socialSecurityNumber });
     if (existingHorse) {
-      return res.status(400).json({ message: 'Un cheval avec cet ID existe déjà.' });
+      return res.status(400).json({ message: 'Un cheval avec ce numéro de sécurité existe déjà.' });
     }
 
     const horse = new Horse({
-      horseId,
+      horseId: new mongoose.Types.ObjectId().toString(), // Génère un ID unique
       name,
       breed,
       socialSecurityNumber,
+      ownerId: req.auth.userId,
     });
 
     await horse.save();
@@ -29,6 +31,7 @@ exports.addHorse = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de l\'ajout du cheval.', error: error.message });
   }
 };
+
 
 // Récupérer tous les chevaux
 exports.getAllHorses = async (req, res) => {
@@ -52,6 +55,17 @@ exports.getHorseById = async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la récupération du cheval :', error);
     res.status(500).json({ message: 'Erreur lors de la récupération du cheval.', error: error.message });
+  }
+};
+
+// Récupérer les chevaux de l'utilisateur connecté
+exports.getHorsesByUser = async (req, res) => {
+  try {
+    const horses = await Horse.find({ ownerId: req.auth.userId });
+    res.status(200).json(horses);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des chevaux :', error);
+    res.status(500).json({ message: 'Erreur lors de la récupération des chevaux.', error: error.message });
   }
 };
 

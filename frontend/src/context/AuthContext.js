@@ -1,5 +1,5 @@
-// AuthContext.js
 import { createContext, useState, useEffect } from 'react';
+import { fetchUserInfo } from '../services/bookingService';
 
 export const AuthContext = createContext();
 
@@ -9,14 +9,24 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userData = JSON.parse(localStorage.getItem('user'));
-    setIsLoggedIn(!!token);
-    setUser(userData);
+    if (token) {
+      fetchUserInfo()
+        .then((userInfo) => {
+          setUser(userInfo);
+          setIsLoggedIn(true);
+        })
+        .catch((error) => {
+          console.error(error);
+          localStorage.removeItem('token');
+          setIsLoggedIn(false);
+          setUser(null);
+        });
+    }
   }, []);
 
   const login = (token, userData) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', token); // Stocker le token
+    localStorage.setItem('user', JSON.stringify(userData)); // Stocker les données utilisateur
     setIsLoggedIn(true);
     setUser(userData);
   };
@@ -24,8 +34,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    setIsLoggedIn(false);
     setUser(null);
+    setIsLoggedIn(false);
   };
 
   return (

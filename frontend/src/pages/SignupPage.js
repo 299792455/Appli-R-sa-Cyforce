@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/SignupPage.scss';
+import Header from '../components/Header'; // Assurez-vous que le chemin est correct
+import Footer from '../components/Footer'; // Assurez-vous que le chemin est correct
 
 function SignupPage() {
   const [name, setName] = useState('');
@@ -12,7 +14,7 @@ function SignupPage() {
       const response = await fetch('http://localhost:5000/api/users/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }), // Envoi des données au backend
+        body: JSON.stringify({ name, email, password }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -29,39 +31,44 @@ function SignupPage() {
   };
 
   return (
-    <div className="signup-page">
-      <form onSubmit={handleSubmit} className="signup-form">
-        <h2>Inscription</h2>
-        <label>
-          Nom d'utilisateur
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-  Adresse e-mail
-  <input
-    type="email"
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-    required // Rendre le champ obligatoire
-  />
-</label>
-
-        <label>
-          Mot de passe
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        <button type="submit">S'inscrire</button>
-      </form>
+    <div>
+      <Header />
+      <div className="signup-page">
+      
+        <form onSubmit={handleSubmit} className="signup-form">
+          <h2>Inscription</h2>
+          <label>
+            Nom d'utilisateur
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Adresse e-mail
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Mot de passe
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+          <button type="submit">S'inscrire</button>
+        </form>
+        
+      </div>
+      <Footer />
     </div>
   );
 }

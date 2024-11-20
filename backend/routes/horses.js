@@ -5,7 +5,8 @@ const auth = require('../middleware/auth');
 
 // Routes pour les chevaux
 router.post('/', auth, horseCtrl.addHorse);
-router.get('/', auth, horseCtrl.getAllHorses);
+router.get('/', auth, horseCtrl.getHorsesByUser); // Récupérer les chevaux de l'utilisateur connecté
+//router.get('/', auth, horseCtrl.getAllHorses);
 router.get('/:id', auth, horseCtrl.getHorseById);
 router.put('/:id', auth, horseCtrl.updateHorse);
 router.delete('/:id', auth, horseCtrl.deleteHorse);
