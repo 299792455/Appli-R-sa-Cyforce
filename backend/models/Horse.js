@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const path = require('path');
 
 const horseSchema = new mongoose.Schema({
   horseId: {
@@ -24,6 +25,12 @@ const horseSchema = new mongoose.Schema({
     ref: 'User', // Référence à l'utilisateur
     required: true,
   },
+  imageURL: {
+    type: String,
+    default: path.join('images', 'logoMiniaCheval.png'), // URL par défaut
+    required: false,
+  },
 });
 
 module.exports = mongoose.model('Horse', horseSchema);
+

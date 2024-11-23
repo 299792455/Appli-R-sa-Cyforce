@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Header.scss';
 import { AuthContext } from '../context/AuthContext';
+import imageHeader from '../styles/images/horse_logo_black_bg.png';
 
 function Header() {
   const { isLoggedIn, user, logout } = useContext(AuthContext);
@@ -13,7 +14,10 @@ function Header() {
 
   return (
     <header className="header">
-      <div className="logo">Mon instant HippoCare</div>
+      <img
+          src={imageHeader}
+          alt="Logo manège Maëlian"
+        />
       <nav>
         <Link to="/">Accueil</Link>
         {/* <Link to="/booking">Réservations</Link> */}

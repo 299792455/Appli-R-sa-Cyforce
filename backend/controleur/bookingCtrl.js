@@ -46,7 +46,7 @@ exports.createBooking = async (req, res) => {
 // Récupérer toutes les réservations
 exports.getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find()
+    const bookings = await Booking.find({ userId: req.auth.userId }) // Filtre par utilisateur connecté
       .populate('horse')
       .select('horse starts_on ends_on userId');
     res.status(200).json(bookings);

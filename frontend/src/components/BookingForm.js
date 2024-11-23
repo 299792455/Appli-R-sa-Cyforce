@@ -1,25 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { fetchHorses, createBooking } from "../services/bookingService";
+// BookingForm.js
+
+import React, { useState } from "react";
+import { createBooking } from "../services/bookingService";
 import "../styles/BookingForm.scss";
 
-function BookingForm({ start, end, onClose }) {
-  const [horses, setHorses] = useState([]);
+function BookingForm({ start, end, onClose, onBookingCreated, horses }) {
   const [selectedHorse, setSelectedHorse] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-
-  useEffect(() => {
-    const loadHorses = async () => {
-      try {
-        const data = await fetchHorses();
-        setHorses(data);
-      } catch (error) {
-        console.error("Erreur lors du chargement des chevaux :", error);
-      }
-    };
-
-    loadHorses();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +23,7 @@ function BookingForm({ start, end, onClose }) {
     try {
       await createBooking(bookingData);
       alert("Créneau réservé avec succès !");
+      onBookingCreated(); // Appeler le callback pour mettre à jour les réservations
       onClose(); // Fermer la modale après réservation
     } catch (error) {
       alert("Erreur lors de la réservation.");

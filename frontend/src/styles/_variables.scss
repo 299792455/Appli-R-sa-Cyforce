@@ -1,9 +1,32 @@
-// Couleurs
-$primary-color: #97C4A7;
-$secondary-color: #A2D5C6;
-$text-color: #333;
-$background-color: #FAF3EB;
+// Couleurs principales
+$primary-color: #71a383 ; // Vert doux (ancienne couleur)
+$text-color: #333; // Couleur principale du texte
+$background-color: #f9f9f9; // Fond global
 $light-gray: #f0f0f0;
+
+// Couleurs des états
+$danger-color: #e74c3c; // Rouge pour les actions dangereuses (ex. Supprimer)
+$secondary-color: #97C4A7; // Vert doux (ancienne couleur)
+$hover-darken: 10%; // Pour ajuster les hover
+
+// Typographie
+$font-family: 'Roboto', sans-serif; // Typographie principale
+$font-size-base: 16px;
+$font-size-large: 18px;
+$font-size-small: 14px;
+
+// Espacement
+$spacing-unit: 10px; // Unité de base pour les marges et padding
+$border-radius: 5px; // Rayon des bordures pour boutons, cartes, etc.
+
+// Ombres
+$box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); // Ombre pour les boutons et modales
+
+// Breakpoints pour la responsivité
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
 
 // Mixin pour le style des boutons
 @mixin button-style($bg-color: $primary-color) {
@@ -11,20 +34,20 @@ $light-gray: #f0f0f0;
   padding: 10px 20px;
   background-color: $bg-color;
   color: #fff;
-  text-decoration: none; /* Retire le soulignement */
-  border: none; /* Désactive la bordure */
-  outline: none; /* Supprime l'outline au focus */
-  border-radius: 5px;
+  text-decoration: none;
+  border: none;
+  outline: none;
+  border-radius: $border-radius;
   font-weight: bold;
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s; /* Ajoute une transition pour le hover */
+  transition: background-color 0.3s;
+
   &:hover {
-    background-color: darken($bg-color, 10%); /* Fonce la couleur au survol */
+    background-color: darken($bg-color, $hover-darken);
   }
+
   &:focus {
-    outline: none; /* Supprime l'outline au focus */
+    outline: none;
   }
 }
-
-

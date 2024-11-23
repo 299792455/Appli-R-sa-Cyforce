@@ -1,9 +1,8 @@
+// bookingService.js
+
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api';
-
-// Fonction pour obtenir le token depuis le localStorage
-const getToken = () => localStorage.getItem('token');
 
 // Créer une instance Axios avec configuration
 const axiosInstance = axios.create({
@@ -26,7 +25,8 @@ axiosInstance.interceptors.request.use(
 export const fetchUserInfo = async () => {
   try {
     const response = await axiosInstance.get('/users/me');
-    return response.data;
+    const user = response.data;
+    return { ...user, id: user._id }; // Normaliser avec `id` au lieu de `_id`
   } catch (error) {
     console.error('Erreur lors de la récupération des informations utilisateur :', error);
     throw error;
@@ -77,7 +77,7 @@ export const fetchBookings = async () => {
   }
 };
 
-// Fonction pour appeler l'API de création de chevaux 
+// Fonction pour créer un cheval
 export const createHorse = async (horseData) => {
   try {
     const response = await axiosInstance.post('/horses', horseData);
@@ -88,7 +88,7 @@ export const createHorse = async (horseData) => {
   }
 };
 
-//Fonction pour la suppression d'une résa
+// Fonction pour supprimer une réservation
 export const deleteBooking = async (id) => {
   try {
     const response = await axiosInstance.delete(`/bookings/${id}`);
@@ -99,13 +99,35 @@ export const deleteBooking = async (id) => {
   }
 };
 
-// Fonction pour la suppression d'une réservation via book_item/:id
+// Fonction pour supprimer une réservation via book_item/:id
 export const deleteBookItem = async (id) => {
   try {
     const response = await axiosInstance.delete(`/bookings/book_item/${id}`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la suppression de la réservation via book_item :', error);
+    throw error;
+  }
+};
+
+// Fonction pour supprimer un cheval
+export const deleteHorse = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`/horses/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la suppression du cheval :', error);
+    throw error;
+  }
+};
+
+// Fonction pour mettre à jour un cheval
+export const updateHorse = async (id, horseData) => {
+  try {
+    const response = await axiosInstance.put(`/horses/${id}`, horseData);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du cheval :', error);
     throw error;
   }
 };

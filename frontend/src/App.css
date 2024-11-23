@@ -10,7 +10,6 @@
 /* App.css */
 body {
   margin: 0;
-  padding: 0;
   font-family: Arial, sans-serif;
   height: 100%;
 }
@@ -19,8 +18,9 @@ body {
   margin: 0 auto;
   max-width: 1440px;
   width: 100%;
-  padding: 0 16px; /* Optionnel : pour ajouter un peu d'espacement sur les côtés */
+  padding:0; /* Optionnel : pour ajouter un peu d'espacement sur les côtés */
   box-sizing: border-box;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
 }
 
 

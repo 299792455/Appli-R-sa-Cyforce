@@ -2,19 +2,19 @@
 
 .steps {
   background-color: $background-color;
-  padding: 40px;
-  height: 370px;
+  padding: 50px;
+  text-align: center;
 
   h2 {
     color: $text-color;
-    text-align: center;
     margin-bottom: 40px;
   }
 
   .step-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
   }
 
   .step {
@@ -22,43 +22,34 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
 
-    h3 {
+    .circle {
+      width: 80px;
+      height: 80px;
+      border: 2px solid $primary-color; // Cercle fin
+      color: $primary-color; // Chiffres en vert
       font-size: 2em;
-      color: $primary-color;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
       margin-bottom: 10px;
-      text-align: center;
+      background-color: transparent; // Pas de remplissage
     }
 
     p {
       color: $text-color;
-      text-align: center;
+      font-size: 1.1em;
+      margin: 0;
     }
   }
 
-  .cta-button-container {
-    text-align: center; /* Centre le bouton */
-    margin-top: 20px;
-  }
-
-  .cta-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: $primary-color;
-    color: #fff;
-    text-decoration: none; /* Retire le soulignement */
-    border-radius: 5px;
-    font-weight: bold;
-    text-align: center;
-    transition: background-color 0.3s;
-
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
+  .line {
+    width: 80px;
+    height: 2px;
+    background-color: $primary-color; // Ligne de connexion en vert
+    margin: 0 20px;
+    align-self: center;
   }
 }
-
