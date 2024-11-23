@@ -1,5 +1,3 @@
-// HorseCreationModal.js
-
 import React, { useState } from 'react';
 import { createHorse } from '../services/bookingService';
 import "../styles/HorseCreationModal.scss";
@@ -32,42 +30,44 @@ const HorseCreationModal = ({ onClose, onHorseCreated }) => {
   };
 
   return (
-    <div className="horse-creation-modal">
-      <h2>Ajouter un cheval</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Nom :
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
+    <div className="horse-creation-modal-wrapper">
+      <div className="horse-creation-modal">
+        <h2>Ajouter un cheval</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Nom :
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </label>
 
-        <label>
-          Race :
-          <input
-            type="text"
-            value={breed}
-            onChange={(e) => setBreed(e.target.value)}
-            required
-          />
-        </label>
+          <label>
+            Race :
+            <input
+              type="text"
+              value={breed}
+              onChange={(e) => setBreed(e.target.value)}
+              required
+            />
+          </label>
 
-        <label>
-          Numéro de sécurité sociale :
-          <input
-            type="text"
-            value={socialSecurityNumber}
-            onChange={(e) => setSocialSecurityNumber(e.target.value)}
-            required
-          />
-        </label>
+          <label>
+            Numéro de sécurité sociale :
+            <input
+              type="text"
+              value={socialSecurityNumber}
+              onChange={(e) => setSocialSecurityNumber(e.target.value)}
+              required
+            />
+          </label>
 
-        <button type="submit">Ajouter</button>
-        <button type="button" onClick={onClose}>Annuler</button>
-      </form>
+          <button type="submit">Ajouter</button>
+          <button type="button" onClick={onClose}>Annuler</button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,78 @@
+/* Wrapper pour le fond semi-transparent */
+.horse-creation-modal-wrapper {
+    position: fixed; /* Positionne le wrapper par rapport à la fenêtre */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Prend toute la largeur de la fenêtre */
+    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+    display: flex; /* Utilisé pour centrer la modale */
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    background-color: rgba(0, 0, 0, 0.5); /* Fond noir semi-transparent */
+    z-index: 1000; /* Place le wrapper au-dessus des autres éléments */
+  }
+  
+  /* Conteneur de la modale */
+  .horse-creation-modal {
+    background-color: white; /* Fond de la modale */
+    padding: 20px; /* Espacement intérieur */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour l'esthétique */
+    border-radius: 8px; /* Coins arrondis */
+    width: 400px; /* Largeur de la modale */
+    max-width: 90%; /* Pour éviter qu'elle soit trop large sur de petits écrans */
+    z-index: 1001; /* Place la modale au-dessus du fond */
+  }
+  
+  /* Titre de la modale */
+  .horse-creation-modal h2 {
+    margin-top: 0; /* Supprime le margin par défaut du titre */
+    text-align: center; /* Centre le texte du titre */
+  }
+  
+  /* Formulaire de la modale */
+  .horse-creation-modal form {
+    display: flex;
+    padding: 20px;
+    flex-direction: column; /* Aligne les éléments du formulaire en colonne */
+  }
+  
+  /* Labels */
+  .horse-creation-modal label {
+    margin-bottom: 10px; /* Espacement entre les champs */
+    width: 95%;
+  }
+  
+  /* Champs de saisie */
+  .horse-creation-modal input {
+    width: 100%; /* Champs prennent toute la largeur */
+    padding: 8px; /* Espacement intérieur des champs */
+    margin-top: 5px; /* Espacement au-dessus des champs */
+    border: 1px solid #ccc; /* Bordure légère */
+    border-radius: 4px; /* Coins arrondis */
+  }
+  
+  /* Boutons */
+  .horse-creation-modal button {
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Bouton Ajouter */
+  .horse-creation-modal button[type="submit"] {
+    background-color: #71a383; /* Couleur bleue pour le bouton Ajouter */
+    color: white;
+  }
+  
+  /* Bouton Annuler */
+  .horse-creation-modal button[type="button"] {
+    background-color: #ccc; /* Couleur grise pour le bouton Annuler */
+  }
+  
+  /* Hover sur les boutons */
+  .horse-creation-modal button:hover {
+    opacity: 0.9; /* Légère transparence au survol */
+  }
+  
