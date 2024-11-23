@@ -4,18 +4,16 @@ import React, { useState, useEffect, useContext } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import Modal from "react-modal";
 import BookingForm from "./BookingForm";
 import HorseCreationModal from "./HorseCreationModal";
 import { fetchBookings, deleteBooking, fetchHorses } from "../services/bookingService";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/bookingCalendar.scss";
+import "../styles/HorseCreationModal.scss"; // Importer les styles des modales
 
 // Configurer moment.js en français
 import "moment/locale/fr";
 moment.locale("fr");
-
-Modal.setAppElement("#root");
 
 const localizer = momentLocalizer(moment);
 
@@ -192,114 +190,94 @@ const BookingCalendar = () => {
       />
 
       {/* Modale de réservation */}
-      <Modal
-        isOpen={isBookingModalOpen}
-        onRequestClose={closeBookingModal}
-        style={{
-          overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
-          content: {
-            width: "500px",
-            margin: "auto",
-            borderRadius: "10px",
-            padding: "20px",
-          },
-        }}
-      >
-        {modalType === "create" && selectedSlot && (
-          <>
-            <h2>Réserver un créneau</h2>
-            <p>
-              Début : {moment(selectedSlot.start).format("DD/MM/YYYY HH:mm")}
-            </p>
-            <p>
-              Fin : {moment(selectedSlot.end).format("DD/MM/YYYY HH:mm")}
-            </p>
-            <BookingForm
-              start={selectedSlot.start}
-              end={selectedSlot.end}
-              onClose={closeBookingModal}
-              onBookingCreated={handleBookingCreated} // Passer le callback
-              horses={horses} // Passer la liste des chevaux
-            />
-          </>
-        )}
+      {isBookingModalOpen && (
+        <div className="horse-creation-modal-wrapper">
+          <div className="horse-creation-modal">
+            {modalType === "create" && selectedSlot && (
+              <>
+                <h2>Réserver un créneau</h2>
+                <p>
+                  Début : {moment(selectedSlot.start).format("DD/MM/YYYY HH:mm")}
+                </p>
+                <p>
+                  Fin : {moment(selectedSlot.end).format("DD/MM/YYYY HH:mm")}
+                </p>
+                <BookingForm
+                  start={selectedSlot.start}
+                  end={selectedSlot.end}
+                  onClose={closeBookingModal}
+                  onBookingCreated={handleBookingCreated}
+                  horses={horses}
+                />
+              </>
+            )}
 
-        {modalType === "details" && selectedBooking && (
-          <>
-            <h2>Détails de la réservation</h2>
-            <p>
-              <strong>Cheval :</strong>{" "}
-              {selectedBooking.title.split(": ")[1]}
-            </p>
-            <p>
-              <strong>Début :</strong>{" "}
-              {moment(selectedBooking.start).format("DD/MM/YYYY HH:mm")}
-            </p>
-            <p>
-              <strong>Fin :</strong>{" "}
-              {moment(selectedBooking.end).format("DD/MM/YYYY HH:mm")}
-            </p>
-            <p>
-              <strong>Propriétaire :</strong>{" "}
-              {selectedBooking.userId === user.id ||
-              selectedBooking.userId?._id === user.id
-                ? "Vous"
-                : "Autre utilisateur"}
-            </p>
+            {modalType === "details" && selectedBooking && (
+              <>
+                <h2>Détails de la réservation</h2>
+                <p>
+                  <strong>Cheval :</strong>{" "}
+                  {selectedBooking.title.split(": ")[1]}
+                </p>
+                <p>
+                  <strong>Début :</strong>{" "}
+                  {moment(selectedBooking.start).format("DD/MM/YYYY HH:mm")}
+                </p>
+                <p>
+                  <strong>Fin :</strong>{" "}
+                  {moment(selectedBooking.end).format("DD/MM/YYYY HH:mm")}
+                </p>
+                <p>
+                  <strong>Propriétaire :</strong>{" "}
+                  {selectedBooking.userId === user.id ||
+                  selectedBooking.userId?._id === user.id
+                    ? "Vous"
+                    : "Autre utilisateur"}
+                </p>
 
-            {selectedBooking.userId === user.id ||
-            selectedBooking.userId?._id === user.id ? (
-              <button
-                onClick={handleDelete}
-                style={{
-                  marginTop: "10px",
-                  backgroundColor: "red",
-                  color: "white",
-                  border: "none",
-                  padding: "10px 20px",
-                  cursor: "pointer",
-                }}
-              >
-                Supprimer la réservation
-              </button>
-            ) : null}
-          </>
-        )}
+                {selectedBooking.userId === user.id ||
+                selectedBooking.userId?._id === user.id ? (
+                  <button
+                    onClick={handleDelete}
+                    style={{
+                      marginTop: "10px",
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      padding: "10px 20px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Supprimer la réservation
+                  </button>
+                ) : null}
+              </>
+            )}
 
-        <button
-          onClick={closeBookingModal}
-          style={{
-            marginTop: "10px",
-            backgroundColor: "gray",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            cursor: "pointer",
-          }}
-        >
-          Fermer
-        </button>
-      </Modal>
+            <button
+              onClick={closeBookingModal}
+              style={{
+                marginTop: "10px",
+                backgroundColor: "gray",
+                color: "white",
+                border: "none",
+                padding: "10px 20px",
+                cursor: "pointer",
+              }}
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modale d'ajout de cheval */}
-      <Modal
-        isOpen={isHorseModalOpen}
-        onRequestClose={closeHorseModal}
-        style={{
-          overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
-          content: {
-            width: "400px",
-            margin: "auto",
-            borderRadius: "10px",
-            padding: "20px",
-          },
-        }}
-      >
+      {isHorseModalOpen && (
         <HorseCreationModal
           onClose={closeHorseModal}
           onHorseCreated={handleHorseCreated}
         />
-      </Modal>
+      )}
     </div>
   );
 };

@@ -7,11 +7,9 @@ import HorseCreationModal from '../components/HorseCreationModal';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookingCalendar from '../components/BookingCalendar';
-import Modal from "react-modal";
 import '../styles/UserProfile.scss';
+import '../styles/HorseCreationModal.scss'; // Importer les styles de la modale
 import horseIcon from '../styles/images/logoMiniaCheval.png';
-
-Modal.setAppElement("#root"); // Nécessaire pour éviter les erreurs d'accessibilité
 
 const UserProfile = () => {
   const { user, logout } = useContext(AuthContext);
@@ -21,7 +19,7 @@ const UserProfile = () => {
   const [selectedHorse, setSelectedHorse] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false); // Nouvel état pour la modale de confirmation
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
   const refreshHorses = () => {
     fetchHorses()
@@ -54,7 +52,8 @@ const UserProfile = () => {
     setIsEditing(false);
   };
 
-  const handleUpdateHorse = () => {
+  const handleUpdateHorse = (e) => {
+    e.preventDefault();
     if (selectedHorse) {
       updateHorse(selectedHorse._id, selectedHorse)
         .then(() => {
@@ -67,7 +66,6 @@ const UserProfile = () => {
   };
 
   const handleDeleteHorse = () => {
-    // Ouvrir la modale de confirmation au lieu d'utiliser window.confirm
     setShowConfirmDeleteModal(true);
   };
 
@@ -136,118 +134,95 @@ const UserProfile = () => {
       )}
 
       {/* Modale de détails du cheval */}
-      <Modal
-        isOpen={showDetailsModal}
-        onRequestClose={closeDetailsModal}
-        style={{
-          overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          },
-          content: {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "400px",
-            padding: "20px",
-            borderRadius: "10px",
-            backgroundColor: "white",
-          },
-        }}
-      >
-        {selectedHorse && (
-          <>
-            <h2>{isEditing ? "Modifier le cheval" : "Détails du cheval"}</h2>
-            {isEditing ? (
+      {showDetailsModal && (
+        <div className="horse-creation-modal-wrapper">
+          <div className="horse-creation-modal">
+            {selectedHorse && (
               <>
-                <label>Nom :</label>
-                <input
-                  type="text"
-                  value={selectedHorse.name}
-                  onChange={(e) => setSelectedHorse({ ...selectedHorse, name: e.target.value })}
-                />
-                <label>Race :</label>
-                <input
-                  type="text"
-                  value={selectedHorse.breed}
-                  onChange={(e) => setSelectedHorse({ ...selectedHorse, breed: e.target.value })}
-                />
-                <label>Numéro de sécurité sociale :</label>
-                <input
-                  type="text"
-                  value={selectedHorse.socialSecurityNumber}
-                  onChange={(e) =>
-                    setSelectedHorse({ ...selectedHorse, socialSecurityNumber: e.target.value })
-                  }
-                />
-                <button onClick={handleUpdateHorse} style={{ marginTop: "10px" }}>
-                  Enregistrer
-                </button>
-              </>
-            ) : (
-              <>
-                <p><strong>Nom :</strong> {selectedHorse.name}</p>
-                <p><strong>Race :</strong> {selectedHorse.breed}</p>
-                <p>
-                  <strong>Numéro de sécurité sociale :</strong>{' '}
-                  {selectedHorse.socialSecurityNumber}
-                </p>
+                <h2>{isEditing ? "Modifier le cheval" : "Détails du cheval"}</h2>
+                {isEditing ? (
+                  <form onSubmit={handleUpdateHorse}>
+                    <label>
+                      Nom :
+                      <input
+                        type="text"
+                        value={selectedHorse.name}
+                        onChange={(e) => setSelectedHorse({ ...selectedHorse, name: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Race :
+                      <input
+                        type="text"
+                        value={selectedHorse.breed}
+                        onChange={(e) => setSelectedHorse({ ...selectedHorse, breed: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Numéro de sécurité sociale :
+                      <input
+                        type="text"
+                        value={selectedHorse.socialSecurityNumber}
+                        onChange={(e) =>
+                          setSelectedHorse({ ...selectedHorse, socialSecurityNumber: e.target.value })
+                        }
+                        required
+                      />
+                    </label>
+                    <button type="submit">Enregistrer</button>
+                    <button type="button" onClick={closeDetailsModal}>Annuler</button>
+                  </form>
+                ) : (
+                  <>
+                    <p><strong>Nom :</strong> {selectedHorse.name}</p>
+                    <p><strong>Race :</strong> {selectedHorse.breed}</p>
+                    <p>
+                      <strong>Numéro de sécurité sociale :</strong>{' '}
+                      {selectedHorse.socialSecurityNumber}
+                    </p>
+                    <div style={{ marginTop: "20px" }}>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        style={{ marginRight: "10px" }}
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        onClick={handleDeleteHorse}
+                        style={{ backgroundColor: "red", color: "white", marginRight: "10px" }}
+                      >
+                        Supprimer
+                      </button>
+                      <button onClick={closeDetailsModal}>Fermer</button>
+                    </div>
+                  </>
+                )}
               </>
             )}
+          </div>
+        </div>
+      )}
 
-            <div style={{ marginTop: "20px" }}>
-              {!isEditing && (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  style={{ marginRight: "10px" }}
-                >
-                  Modifier
-                </button>
-              )}
+      {/* Modale de confirmation de suppression */}
+      {showConfirmDeleteModal && (
+        <div className="horse-creation-modal-wrapper">
+          <div className="horse-creation-modal">
+            <h2>Confirmer la suppression</h2>
+            <p>Êtes-vous sûr de vouloir supprimer ce cheval ?</p>
+            <div style={{ marginTop: "20px", textAlign: "right" }}>
               <button
-                onClick={handleDeleteHorse}
+                onClick={confirmDeleteHorse}
                 style={{ backgroundColor: "red", color: "white", marginRight: "10px" }}
               >
                 Supprimer
               </button>
-              <button onClick={closeDetailsModal}>Fermer</button>
+              <button onClick={cancelDeleteHorse}>Annuler</button>
             </div>
-          </>
-        )}
-      </Modal>
-
-      {/* Modale de confirmation de suppression */}
-      <Modal
-        isOpen={showConfirmDeleteModal}
-        onRequestClose={cancelDeleteHorse}
-        style={{
-          overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          },
-          content: {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "300px",
-            padding: "20px",
-            borderRadius: "10px",
-            backgroundColor: "white",
-          },
-        }}
-      >
-        <h2>Confirmer la suppression</h2>
-        <p>Êtes-vous sûr de vouloir supprimer ce cheval ?</p>
-        <div style={{ marginTop: "20px", textAlign: "right" }}>
-          <button
-            onClick={confirmDeleteHorse}
-            style={{ backgroundColor: "red", color: "white", marginRight: "10px" }}
-          >
-            Supprimer
-          </button>
-          <button onClick={cancelDeleteHorse}>Annuler</button>
+          </div>
         </div>
-      </Modal>
+      )}
 
       <Footer />
     </>
