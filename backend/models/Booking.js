@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-  horse: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Horse',
-    required: true,
-  },
+  horses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Horse',
+      required: true,
+    },
+  ],
   starts_on: {
     type: Date,
     required: true,

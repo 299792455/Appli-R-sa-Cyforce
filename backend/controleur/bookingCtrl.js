@@ -4,30 +4,34 @@ const Horse = require('../models/Horse');
 // Créer une réservation
 exports.createBooking = async (req, res) => {
   try {
-    const { horse, starts_on, ends_on, customer_name, customer_email } = req.body;
+    const { horses, starts_on, ends_on, customer_name, customer_email } = req.body;
 
-    if (!horse || !starts_on || !ends_on || !customer_name || !customer_email) {
-      return res.status(400).json({ message: "Tous les champs sont obligatoires." });
+    if (!horses || !Array.isArray(horses) || horses.length === 0 || !starts_on || !ends_on || !customer_name || !customer_email) {
+      return res.status(400).json({ message: "Tous les champs sont obligatoires et vous devez sélectionner au moins un cheval." });
     }
 
-    const existingHorse = await Horse.findById(horse);
-    if (!existingHorse) {
-      return res.status(404).json({ message: "Cheval non trouvé." });
+    // Vérifier que tous les chevaux existent
+    const existingHorses = await Horse.find({ _id: { $in: horses } });
+    if (existingHorses.length !== horses.length) {
+      return res.status(404).json({ message: "Un ou plusieurs chevaux n'ont pas été trouvés." });
     }
 
-    const overlappingBooking = await Booking.findOne({
-      horse,
-      $or: [
-        { starts_on: { $lt: ends_on }, ends_on: { $gt: starts_on } },
-      ],
-    });
+    // Vérifier les chevauchements pour chaque cheval
+    for (let horseId of horses) {
+      const overlappingBooking = await Booking.findOne({
+        horses: horseId,
+        $or: [
+          { starts_on: { $lt: ends_on }, ends_on: { $gt: starts_on } },
+        ],
+      });
 
-    if (overlappingBooking) {
-      return res.status(400).json({ message: "Ce créneau est déjà réservé pour ce cheval." });
+      if (overlappingBooking) {
+        return res.status(400).json({ message: `Le cheval avec l'ID ${horseId} est déjà réservé pour ce créneau.` });
+      }
     }
 
     const newBooking = new Booking({
-      horse,
+      horses,
       starts_on,
       ends_on,
       customer_name,
@@ -47,8 +51,8 @@ exports.createBooking = async (req, res) => {
 exports.getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ userId: req.auth.userId }) // Filtre par utilisateur connecté
-      .populate('horse')
-      .select('horse starts_on ends_on userId');
+      .populate('horses')
+      .select('horses starts_on ends_on userId');
     res.status(200).json(bookings);
   } catch (error) {
     console.error('Erreur lors de la récupération des réservations :', error);
@@ -59,7 +63,7 @@ exports.getAllBookings = async (req, res) => {
 // Récupérer une réservation par ID
 exports.getBookingById = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id).populate('horse');
+    const booking = await Booking.findById(req.params.id).populate('horses');
     if (!booking) {
       return res.status(404).json({ message: 'Réservation non trouvée.' });
     }
@@ -73,7 +77,7 @@ exports.getBookingById = async (req, res) => {
 // Mettre à jour une réservation
 exports.updateBooking = async (req, res) => {
   try {
-    const updatedBooking = await Booking.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedBooking = await Booking.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('horses');
     if (!updatedBooking) {
       return res.status(404).json({ message: 'Réservation non trouvée.' });
     }

@@ -1,5 +1,3 @@
-// BookingCalendar.js
-
 import React, { useState, useEffect, useContext } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
@@ -46,13 +44,13 @@ const BookingCalendar = () => {
           eventClass = "today-event";
         }
 
+        const horseNames = booking.horses.map((horse) => horse.name).join(', ');
+
         return {
           id: booking._id,
           start: bookingStart,
           end: bookingEnd,
-          title: booking.horse
-            ? `Réservé : ${booking.horse.name}`
-            : "Réservation sans cheval",
+          title: horseNames ? `Réservé : ${horseNames}` : "Réservation sans cheval",
           userId: booking.userId,
           className: eventClass,
         };
@@ -216,7 +214,7 @@ const BookingCalendar = () => {
               <>
                 <h2>Détails de la réservation</h2>
                 <p>
-                  <strong>Cheval :</strong>{" "}
+                  <strong>Chevaux :</strong>{" "}
                   {selectedBooking.title.split(": ")[1]}
                 </p>
                 <p>
